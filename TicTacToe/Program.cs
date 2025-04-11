@@ -10,25 +10,29 @@ class Program
         { '7', '8', '9' },
     };
     
-    private static string[] players = {"Kalle","Kajsa"};
-    private static char[] signs = { 'U', 'X' };
+    private static string[] players = {"X","O"};
+    private static char[] signs = { 'X', 'O' };
     private static int input = 0;
     private static int turns = 0;
+    
+    private static bool gameOver = false;
 
     static void Main(string[] args)
     {
-        while (true)
+        while (!gameOver)
         {
             Field();
             AskForInput();
             XorO(signs[turns % 2], input);
             turns++;
+            CheckForWin();
         }
     }
 
     public static void Field()
     {
         Console.Clear();
+        Console.WriteLine();
         Console.WriteLine("  {0}  |  {1}  |  {2}  ", board[0,0],board[0,1],board[0,2]);
         Console.WriteLine("-----|-----|-----");
         Console.WriteLine("  {0}  |  {1}  |  {2}  ", board[1,0],board[1,1],board[1,2]);
@@ -91,6 +95,47 @@ class Program
             case 7: board[2, 0] = sign; break;
             case 8: board[2, 1] = sign; break;
             case 9: board[2, 2] = sign; break;
+        }
+    }
+
+    public static void CheckForWin()
+    {
+        foreach (var sign in signs)
+        {
+            //Check for win on any row
+            for (int row = 0; row < 3; row++)
+            {
+                if (board[row, 0] == sign &&
+                    board[row, 1] == sign &&
+                    board[row, 2] == sign)
+                {
+                    Console.WriteLine($"Player {sign} won");
+                    gameOver = true;
+                    return;
+                }
+            }
+            
+            // Check for win any columns
+            for (int col = 0; col < 3; col++)
+            {
+                if (board[0, col] == sign && 
+                    board[1, col] == sign && 
+                    board[2, col] == sign)
+                {
+                    Console.WriteLine($"Player {sign} won");
+                    gameOver = true;
+                    return;
+                }
+            }
+            
+            // Check win on any columns
+            if ((board[0, 0] == sign && board[1, 1] == sign && board[2, 2] == sign) ||
+                (board[0, 2] == sign && board[1, 1] == sign && board[2, 0] == sign))
+            {
+                Console.WriteLine($"Player {sign} won");
+                gameOver = true;
+                return;
+            }
         }
     }
 }
